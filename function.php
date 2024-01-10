@@ -4,7 +4,7 @@ Function ResimAyir($AnaResimYolu,$KayitKlasoru,$GenislikParcaSayisi,$YukseklikPa
 	$KayitKlasoru = str_replace("\\","/",$KayitKlasoru);
 	$AnaResimYolu = str_replace("\\","/",$AnaResimYolu);
 	
-	if (substr($KayitKlasoru, -1) == "/" || substr($KayitKlasoru, -1) == "\\") {
+	if (substr($KayitKlasoru, -1) == "/") {
 		$KayitKlasoru = rtrim($KayitKlasoru,"/");
 		$KayitKlasoru = rtrim($KayitKlasoru,"\\");
 	}
