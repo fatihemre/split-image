@@ -1,3 +1,4 @@
+<?php
 Function ResimAyir($AnaResimYolu,$KayitKlasoru,$GenislikParcaSayisi,$YukseklikParcaSayisi) {
 	
 	$KayitKlasoru = str_replace("\\","/",$KayitKlasoru);
@@ -66,3 +67,4 @@ Function ResimAyir($AnaResimYolu,$KayitKlasoru,$GenislikParcaSayisi,$YukseklikPa
 	imagedestroy($AnaResim);
 	return $Cikti;
 }
+?>
