@@ -4,8 +4,8 @@ include("function.php"); # Call php image split function file
 
 $AnaResimYolu = 'img/test.png';   # Import image file
 $KayitKlasoru = 'img/iParts'      # Output image path
-$GenislikParcaSayisi = 4;         #
-$YukseklikParcaSayisi = 2;        #
+$GenislikParcaSayisi = 4;         # Number of horizontal partitions
+$YukseklikParcaSayisi = 2;        # Number of vertical partitions
 
 $Output = ResimAyir($AnaResimYolu,$KayitKlasoru,$GenislikParcaSayisi,$YukseklikParcaSayisi);
 
@@ -15,10 +15,9 @@ echo '</pre>';
 
 
 
-
-
-# If everything goes well, the output should be like this:
 /*
+
+ If everything goes well, the output should be like this:
 
 Array
 (
@@ -30,7 +29,7 @@ Array
     [5] => img/iParts/1704902429_5.png     # Image file 6
     [6] => img/iParts/1704902429_6.png     # Image file 7
     [7] => img/iParts/1704902429_7.png     # Image file 8
-    [KesiSayisi] => 8                      # Total number of divided images
+    [KesiSayisi] => 8                      # Total number of parts
 )
 
 */
