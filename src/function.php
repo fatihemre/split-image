@@ -1,70 +1,83 @@
 <?php
-Function ResimAyir($AnaResimYolu,$KayitKlasoru,$GenislikParcaSayisi,$YukseklikParcaSayisi) {
-	
-	$KayitKlasoru = str_replace("\\","/",$KayitKlasoru);
-	$AnaResimYolu = str_replace("\\","/",$AnaResimYolu);
-	
-	if (substr($KayitKlasoru, -1) == "/") {
-		$KayitKlasoru = rtrim($KayitKlasoru,"/");
-		$KayitKlasoru = rtrim($KayitKlasoru,"\\");
-	}
-	
-	
-	if (!file_exists($AnaResimYolu))
-		return "The specified file does not exist!";
 
-	$DosyaUzantisi = pathinfo($AnaResimYolu, PATHINFO_EXTENSION);
-	$KesiSayisi = 0;
-	$AnaResim;
-	
-	if (empty($DosyaUzantisi))
-		return "Please define a valid image file.";
-
-	switch ($DosyaUzantisi){
-	case 'png':
-		$AnaResim = imagecreatefrompng($AnaResimYolu);
-		break;
-
-	case 'jpeg':
-	case 'jpg':
-		$AnaResim = imagecreatefromjpeg($AnaResimYolu);
-		break;
-
-	case 'gif':
-		$AnaResim = imagecreatefromgif($AnaResimYolu);
-		break;
+/**
+ * Split an image into multiple pieces and save them to a specified folder.
+ *
+ * @param string $imagePath The path to the image file.
+ * @param string $saveTo The folder to save the split images to.
+ * @param int $horizontalPieces The number of horizontal pieces to split the image into.
+ * @param int $verticalPieces The number of vertical pieces to split the image into.
+ * @return array|string An array containing the paths to the split images if successful, or a string with an error message if unsuccessful.
+ */
+function splitImage(string $imagePath, string $saveTo, int $horizontalPieces, int $verticalPieces): array|string
+{
+	$allowedMimeTypes = ['image/jpg', 'image/jpe', 'image/jpeg', 'image/gif', 'image/png'];
+	if(!file_exists($imagePath)) {
+		return 'The specified file does not exist!';
 	}
 
-	$Yukseklik 	= imagesy($AnaResim);
-	$Genislik 	= imagesx($AnaResim);
+	if(!is_writable($saveTo)) {
+		return 'The destination folder is not writable!';
+	}
 
-	$GenislikParcaTaneBoyutu 	= $Genislik / $GenislikParcaSayisi;
-	$YukseklikParcaTaneBoyutu 	= $Yukseklik / $YukseklikParcaSayisi;
+	if(($horizontalPieces + $verticalPieces) <= 2) {
+		return 'You must select a sufficient number of pieces.';
+	}
 
-	if (($GenislikParcaSayisi+$YukseklikParcaSayisi) <= 2) {
-		return "You must select a sufficient number of pieces.";
-	} else {
-		for ($i=0;$i<$YukseklikParcaSayisi;$i++) {
-			$DikeyKesi = $YukseklikParcaTaneBoyutu * $i;
-			
-			for ($e=0;$e<$GenislikParcaSayisi;$e++) {
-				$YatayKesi =  $GenislikParcaTaneBoyutu * $e;
-				
-				$im2 = imagecrop($AnaResim, ['x' => $YatayKesi, 'y' => $DikeyKesi, 'width' => $GenislikParcaTaneBoyutu, 'height' => $YukseklikParcaTaneBoyutu]);
-				
-				if ($im2 !== FALSE) {
-					$Cikti[$KesiSayisi] = "$KayitKlasoru/".time()."_$KesiSayisi.".$DosyaUzantisi;
-					imagejpeg($im2, $Cikti[$KesiSayisi]);
-					$KesiSayisi++;
-					imagedestroy($im2);
-				}
+	$finfo = new finfo(FILEINFO_MIME_TYPE);
+	$mimeType = $finfo->file($imagePath);
+
+	if(!in_array($mimeType, $allowedMimeTypes, true)) {
+		return 'MIME type can\'t be detected!';
+	}
+
+	$originalExtension = pathinfo($imagePath, PATHINFO_EXTENSION);
+
+	$mainImage = match ($originalExtension) {
+		'jpe', 'jpeg', 'jpg' => imagecreatefromjpeg($imagePath),
+		'png' => imagecreatefrompng($imagePath),
+		'gif' => imagecreatefromgif($imagePath),
+		default => null
+	};
+
+	if(!($mainImage instanceof GdImage)) {
+		return 'Please check file extension';
+	}
+
+	$imageWidth = imagesx($mainImage);
+	$imageHeight = imagesy($mainImage);
+
+	$widthPerPiece = $imageWidth / $horizontalPieces;
+	$heightPerPiece = $imageHeight / $verticalPieces;
+
+	$pieceCount = 0;
+	$output = [];
+
+	for($i=0;$i<$verticalPieces;$i++) {
+		$verticalStart = $heightPerPiece * $i;
+
+		for($n=0;$n<$horizontalPieces;$n++) {
+			$horizontalStart = $widthPerPiece * $n;
+
+			$image = imagecrop($mainImage, [
+				'x' => $horizontalStart,
+				'y' => $verticalStart,
+				'width' => $widthPerPiece,
+				'height' => $heightPerPiece
+			]);
+
+			if($image !== false) {
+				$output[$pieceCount] = $saveTo . DIRECTORY_SEPARATOR . time() . '_' . $pieceCount.'.'.$originalExtension;
+				match ($originalExtension) {
+					'jpg', 'jpeg', 'jpe' => imagejpeg($image, $output[$pieceCount]),
+					'png' => imagepng($image, $output[$pieceCount]),
+					'gif' => imagegif($image, $output[$pieceCount])
+				};
+				$pieceCount++;
+				imagedestroy($image);
 			}
 		}
 	}
 
-	$Cikti["KesiSayisi"] = $KesiSayisi;
-	
-	imagedestroy($AnaResim);
-	return $Cikti;
+	return $output;
 }
-?>

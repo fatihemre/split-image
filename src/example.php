@@ -1,37 +1,29 @@
 <?php
 
-include("function.php"); # Call php image split function file
+include("function.php");
 
-$AnaResimYolu = 'img/test.png';   # Import image file
-$KayitKlasoru = 'img/iParts'      # Output image path
-$GenislikParcaSayisi = 4;         # Number of horizontal partitions
-$YukseklikParcaSayisi = 2;        # Number of vertical partitions
+$mainImage = dirname(__DIR__) . '/img/example.png';
+$outputFolder = dirname(__DIR__) . '/img/parts';
 
-$Output = ResimAyir($AnaResimYolu,$KayitKlasoru,$GenislikParcaSayisi,$YukseklikParcaSayisi);
+$horizontalPieces = 4;
+$verticalPieces = 2;
 
-echo '<pre>';
-Print_r($Output);
-echo '</pre>';
+$output = splitImage($mainImage, $outputFolder, $horizontalPieces, $verticalPieces);
 
+print_r($output);
 
-
-/*
-
- If everything goes well, the output should be like this:
-
-Array
-(
-    [0] => img/iParts/1704902429_0.png     # Image file 1
-    [1] => img/iParts/1704902429_1.png     # Image file 2
-    [2] => img/iParts/1704902429_2.png     # Image file 3
-    [3] => img/iParts/1704902429_3.png     # Image file 4
-    [4] => img/iParts/1704902429_4.png     # Image file 5
-    [5] => img/iParts/1704902429_5.png     # Image file 6
-    [6] => img/iParts/1704902429_6.png     # Image file 7
-    [7] => img/iParts/1704902429_7.png     # Image file 8
-    [KesiSayisi] => 8                      # Total number of parts
-)
-
-*/
-
-?>
+/**
+ * Output:
+ *
+ * Array
+ * (
+ *      [0] => img/iParts/1704902429_0.png
+ *      [1] => img/iParts/1704902429_1.png
+ *      [2] => img/iParts/1704902429_2.png
+ *      [3] => img/iParts/1704902429_3.png
+ *      [4] => img/iParts/1704902429_4.png
+ *      [5] => img/iParts/1704902429_5.png
+ *      [6] => img/iParts/1704902429_6.png
+ *      [7] => img/iParts/1704902429_7.png
+ * )
+ */
