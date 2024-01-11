@@ -1,4 +1,7 @@
 .idea
+img
+.DS_Store
+composer.lock
 # CakePHP 3
 
 /vendor/*
