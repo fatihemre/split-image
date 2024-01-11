@@ -1,0 +1,23 @@
+{
+    "name": "oktayc0/split-image-php",
+    "description": "Split images by aspect ratio with PHP",
+    "type": "library",
+    "homepage": "https://github.com/oktayc0/SplitImagePHP",
+    "license": "The Unlicense",
+    "autoload": {
+        "files": [
+            "src/function.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "oktayc0"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {
+        "php": "^8.0",
+        "ext-fileinfo": "*",
+        "ext-gd": "*"
+    }
+}
